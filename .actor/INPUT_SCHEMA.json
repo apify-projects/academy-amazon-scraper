@@ -1,0 +1,15 @@
+{
+    "title": "Academy Amazon Scraper",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "keyword": {
+            "title": "Keyword",
+            "type": "string",
+            "description": "The keyword to search for on Amazon.",
+            "editor": "textfield",
+            "default": "iphone"
+        }
+    },
+    "required": ["keyword"]
+}

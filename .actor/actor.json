@@ -1,0 +1,11 @@
+{
+    "actorSpecification": 1,
+    "name": "academy-amazon-scraper",
+    "title": "Academy Amazon Scraper",
+    "description": "Scrapes Amazon product listings and their offers for a given keyword.",
+    "version": "0.0",
+    "buildTag": "latest",
+    "environmentVariables": {},
+    "dockerfile": "./Dockerfile",
+    "input": "./INPUT_SCHEMA.json"
+}

@@ -1,0 +1,15 @@
+{
+    "name": "academy-amazon-scraper",
+    "version": "0.0.1",
+    "type": "module",
+    "description": "Amazon scraper starter project for the Apify Academy expert scraping course",
+    "main": "src/main.js",
+    "scripts": {
+        "start": "node src/main.js",
+        "start:dev": "apify run"
+    },
+    "dependencies": {
+        "apify": "^3.0.0",
+        "crawlee": "^3.0.0"
+    }
+}
