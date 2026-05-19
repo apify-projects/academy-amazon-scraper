@@ -12,7 +12,10 @@ router.addHandler(labels.START, async ({ $, crawler, request }) => {
         const element = $(product);
         const titleElement = $(element.find('.a-text-normal[href]'));
 
-        const url = `${BASE_URL}${titleElement.attr('href')}`;
+        const href = titleElement.attr('href');
+        if (!href) continue;
+
+        const url = `${BASE_URL}${href}`;
 
         await crawler.addRequests([{
             url,
@@ -35,7 +38,7 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
     const description = $('div#productDescription').text().trim();
 
     await crawler.addRequests([{
-        url: `${BASE_URL}/gp/aod/ajax/ref=auto_load_aod?asin=${data.asin}&pc=dp`,
+        url: `${BASE_URL}/dp/${data.asin}?th=1&psc=1`,
         label: labels.OFFERS,
         userData: {
             data: {
@@ -49,13 +52,12 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
 router.addHandler(labels.OFFERS, async ({ $, request }) => {
     const { data } = request.userData;
 
-    for (const offer of $('#aod-offer')) {
-        const element = $(offer);
+    const price = $('.a-price .a-offscreen').first().text().trim();
+    const sellerName = $('#sellerProfileTriggerId, #merchant-info a').first().text().trim();
 
-        await Dataset.pushData({
-            ...data,
-            sellerName: element.find('div[id*="soldBy"] a[aria-label]').text().trim(),
-            offer: element.find('.a-price .a-offscreen').text().trim(),
-        });
-    }
+    await Dataset.pushData({
+        ...data,
+        sellerName,
+        offer: price,
+    });
 });
