@@ -38,7 +38,7 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
     const description = $('div#productDescription').text().trim();
 
     await crawler.addRequests([{
-        url: `${BASE_URL}/gp/offer-listing/${data.asin}`,
+        url: `${BASE_URL}/dp/${data.asin}?th=1&psc=1`,
         label: labels.OFFERS,
         userData: {
             data: {
@@ -52,18 +52,12 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
 router.addHandler(labels.OFFERS, async ({ $, request }) => {
     const { data } = request.userData;
 
-    const offers = $('#olpOfferList .olpOffer');
+    const price = $('.a-price .a-offscreen').first().text().trim();
+    const sellerName = $('#sellerProfileTriggerId, #merchant-info a').first().text().trim();
 
-    for (const offer of offers) {
-        const el = $(offer);
-        const price = el.find('.olpOfferPrice').text().trim();
-        const sellerName = el.find('.olpSellerName a').first().text().trim()
-            || el.find('.olpSellerName').text().trim();
-
-        await Dataset.pushData({
-            ...data,
-            sellerName,
-            offer: price,
-        });
-    }
+    await Dataset.pushData({
+        ...data,
+        sellerName,
+        offer: price,
+    });
 });
