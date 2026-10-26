@@ -9,6 +9,12 @@ router.addHandler(labels.START, async ({ $, crawler, request }) => {
     // Skip sponsored results, they lead to ads instead of product pages
     const products = $('div[data-component-type="s-search-result"]:not(.AdHolder)');
 
+    // Sometimes Amazon returns a page without any results,
+    // so we throw an error to retry the request with a different proxy
+    if (!products.length) {
+        throw new Error('No products found, retrying');
+    }
+
     for (const product of products) {
         const element = $(product);
         const asin = element.attr('data-asin');
