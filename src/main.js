@@ -9,6 +9,8 @@ const { keyword = 'iphone' } = (await Actor.getInput()) ?? {};
 
 const proxyConfiguration = await Actor.createProxyConfiguration({
     groups: ['RESIDENTIAL'],
+    // Without this, Amazon shows prices in the currency of the proxy's country
+    countryCode: 'US',
 });
 
 const crawler = new CheerioCrawler({

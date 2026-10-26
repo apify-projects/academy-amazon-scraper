@@ -1,29 +1,28 @@
 import { createCheerioRouter, Dataset } from 'crawlee';
-import { BASE_URL, labels } from './constants.js';
+import { BASE_URL, OFFERS_URL, labels } from './constants.js';
 
 export const router = createCheerioRouter();
 
 router.addHandler(labels.START, async ({ $, crawler, request }) => {
     const { keyword } = request.userData;
 
-    const products = $('div > div[data-asin]:not([data-asin=""])');
+    // Skip sponsored results, they lead to ads instead of product pages
+    const products = $('div[data-component-type="s-search-result"]:not(.AdHolder)');
 
     for (const product of products) {
         const element = $(product);
-        const titleElement = $(element.find('.a-text-normal[href]'));
+        const asin = element.attr('data-asin');
+        if (!asin) continue;
 
-        const href = titleElement.attr('href');
-        if (!href) continue;
-
-        const url = `${BASE_URL}${href}`;
+        const url = `${BASE_URL}/dp/${asin}`;
 
         await crawler.addRequests([{
             url,
             label: labels.PRODUCT,
             userData: {
                 data: {
-                    title: titleElement.first().text().trim(),
-                    asin: element.attr('data-asin'),
+                    title: element.find('h2[aria-label]').text().trim(),
+                    asin,
                     itemUrl: url,
                     keyword,
                 },
@@ -35,10 +34,17 @@ router.addHandler(labels.START, async ({ $, crawler, request }) => {
 router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
     const { data } = request.userData;
 
-    const description = $('div#productDescription').text().trim();
+    // Sometimes Amazon returns an empty page instead of the product,
+    // so we throw an error to retry the request with a different proxy
+    if (!$('#productTitle').length) {
+        throw new Error('Product page did not load, retrying');
+    }
+
+    const description = $('div#productDescription').text().trim()
+        || $('#feature-bullets li').map((i, item) => $(item).text().trim()).get().join(' ');
 
     await crawler.addRequests([{
-        url: `${BASE_URL}/dp/${data.asin}?th=1&psc=1`,
+        url: OFFERS_URL(data.asin),
         label: labels.OFFERS,
         userData: {
             data: {
@@ -52,12 +58,19 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
 router.addHandler(labels.OFFERS, async ({ $, request }) => {
     const { data } = request.userData;
 
-    const price = $('.a-price .a-offscreen').first().text().trim();
-    const sellerName = $('#sellerProfileTriggerId, #merchant-info a').first().text().trim();
+    // The pinned offer is the one in the "Add to Cart" box,
+    // the others are listed below it
+    for (const offer of $('#aod-pinned-offer, #aod-offer')) {
+        const element = $(offer);
+        const price = element.find('.apex-pricetopay-value').first().text().trim();
 
-    await Dataset.pushData({
-        ...data,
-        sellerName,
-        offer: price,
-    });
+        // Products nobody sells have a placeholder offer without a price
+        if (!price) continue;
+
+        await Dataset.pushData({
+            ...data,
+            sellerName: element.find('#aod-offer-soldBy [aria-label]').text().trim(),
+            offer: price,
+        });
+    }
 });
