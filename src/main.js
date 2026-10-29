@@ -1,7 +1,8 @@
-import { Actor } from 'apify';
-import { CheerioCrawler, log } from 'crawlee';
-import { router } from './routes.js';
+import { CheerioCrawler } from '@crawlee/cheerio';
+import { Actor, log } from 'apify';
+
 import { BASE_URL, labels } from './constants.js';
+import { router } from './routes.js';
 
 await Actor.init();
 
@@ -20,11 +21,13 @@ const crawler = new CheerioCrawler({
 });
 
 log.info('Starting the crawl.');
-await crawler.run([{
-    url: `${BASE_URL}/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${encodeURIComponent(keyword)}`,
-    label: labels.START,
-    userData: { keyword },
-}]);
+await crawler.run([
+    {
+        url: `${BASE_URL}/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${encodeURIComponent(keyword)}`,
+        label: labels.START,
+        userData: { keyword },
+    },
+]);
 log.info('Crawl finished.');
 
 await Actor.exit();

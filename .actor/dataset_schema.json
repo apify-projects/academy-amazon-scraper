@@ -1,0 +1,36 @@
+{
+    "$schema": "https://apify.com/schemas/v1/dataset.ide.json",
+    "actorSpecification": 1,
+    "fields": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+            "title": { "type": "string", "description": "Title of the product" },
+            "asin": { "type": "string", "description": "Amazon's ID of the product" },
+            "itemUrl": { "type": "string", "description": "URL of the product page" },
+            "keyword": { "type": "string", "description": "The keyword the product was found by" },
+            "description": { "type": "string", "description": "Description of the product" },
+            "sellerName": { "type": "string", "description": "Name of the seller who makes the offer" },
+            "offer": { "type": "string", "description": "Price of the offer, including the currency" }
+        },
+        "required": ["title", "asin", "itemUrl", "keyword", "description", "sellerName", "offer"]
+    },
+    "views": {
+        "overview": {
+            "title": "Offers",
+            "transformation": {
+                "fields": ["title", "sellerName", "offer", "asin", "itemUrl"]
+            },
+            "display": {
+                "component": "table",
+                "properties": {
+                    "title": { "label": "Product", "format": "text" },
+                    "sellerName": { "label": "Seller", "format": "text" },
+                    "offer": { "label": "Price", "format": "text" },
+                    "asin": { "label": "ASIN", "format": "text" },
+                    "itemUrl": { "label": "URL", "format": "link" }
+                }
+            }
+        }
+    }
+}

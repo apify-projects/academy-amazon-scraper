@@ -1,9 +1,10 @@
-import { createCheerioRouter, Dataset } from 'crawlee';
-import { BASE_URL, OFFERS_URL, labels } from './constants.js';
+import { createCheerioRouter } from '@crawlee/cheerio';
+
+import { BASE_URL, labels, OFFERS_URL } from './constants.js';
 
 export const router = createCheerioRouter();
 
-router.addHandler(labels.START, async ({ $, crawler, request }) => {
+router.addHandler(labels.START, async ({ $, addRequests, request }) => {
     const { keyword } = request.userData;
 
     // Skip sponsored results, they lead to ads instead of product pages
@@ -15,6 +16,7 @@ router.addHandler(labels.START, async ({ $, crawler, request }) => {
         throw new Error('No products found, retrying');
     }
 
+    const requests = [];
     for (const product of products) {
         const element = $(product);
         const asin = element.attr('data-asin');
@@ -22,7 +24,7 @@ router.addHandler(labels.START, async ({ $, crawler, request }) => {
 
         const url = `${BASE_URL}/dp/${asin}`;
 
-        await crawler.addRequests([{
+        requests.push({
             url,
             label: labels.PRODUCT,
             userData: {
@@ -33,11 +35,12 @@ router.addHandler(labels.START, async ({ $, crawler, request }) => {
                     keyword,
                 },
             },
-        }]);
+        });
     }
+    await addRequests(requests);
 });
 
-router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
+router.addHandler(labels.PRODUCT, async ({ $, addRequests, request }) => {
     const { data } = request.userData;
 
     // Sometimes Amazon returns an empty page instead of the product,
@@ -46,22 +49,28 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
         throw new Error('Product page did not load, retrying');
     }
 
-    const description = $('div#productDescription').text().trim()
-        || $('#feature-bullets li').map((i, item) => $(item).text().trim()).get().join(' ');
+    const description =
+        $('div#productDescription').text().trim() ||
+        $('#feature-bullets li')
+            .map((i, item) => $(item).text().trim())
+            .get()
+            .join(' ');
 
-    await crawler.addRequests([{
-        url: OFFERS_URL(data.asin),
-        label: labels.OFFERS,
-        userData: {
-            data: {
-                ...data,
-                description,
+    await addRequests([
+        {
+            url: OFFERS_URL(data.asin),
+            label: labels.OFFERS,
+            userData: {
+                data: {
+                    ...data,
+                    description,
+                },
             },
         },
-    }]);
+    ]);
 });
 
-router.addHandler(labels.OFFERS, async ({ $, request }) => {
+router.addHandler(labels.OFFERS, async ({ $, request, pushData }) => {
     const { data } = request.userData;
 
     // Sometimes Amazon returns a page without the offers,
@@ -79,7 +88,7 @@ router.addHandler(labels.OFFERS, async ({ $, request }) => {
         // Products nobody sells have a placeholder offer without a price
         if (!price) continue;
 
-        await Dataset.pushData({
+        await pushData({
             ...data,
             sellerName: element.find('#aod-offer-soldBy [aria-label]').text().trim(),
             offer: price,

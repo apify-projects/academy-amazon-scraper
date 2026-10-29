@@ -3,13 +3,25 @@
     "version": "0.0.1",
     "type": "module",
     "description": "Amazon scraper starter project for the Apify Academy expert scraping course",
-    "main": "src/main.js",
-    "scripts": {
-        "start": "node src/main.js",
-        "start:dev": "apify run"
+    "engines": {
+        "node": ">=24"
     },
     "dependencies": {
-        "apify": "^3.0.0",
-        "crawlee": "^3.0.0"
+        "@crawlee/cheerio": "^3.18.2",
+        "apify": "^3.7.2"
+    },
+    "devDependencies": {
+        "@apify/eslint-config": "^2.0.6",
+        "eslint": "^9.39.0",
+        "eslint-config-prettier": "^10.1.8",
+        "prettier": "^3.9.10"
+    },
+    "scripts": {
+        "start": "node src/main.js",
+        "start:dev": "apify run",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "lint": "eslint",
+        "lint:fix": "eslint --fix"
     }
 }
