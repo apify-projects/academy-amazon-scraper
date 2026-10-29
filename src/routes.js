@@ -4,7 +4,7 @@ import { BASE_URL, labels, OFFERS_URL } from './constants.js';
 
 export const router = createCheerioRouter();
 
-router.addHandler(labels.START, async ({ $, crawler, request }) => {
+router.addHandler(labels.START, async ({ $, addRequests, request }) => {
     const { keyword } = request.userData;
 
     // Skip sponsored results, they lead to ads instead of product pages
@@ -37,10 +37,10 @@ router.addHandler(labels.START, async ({ $, crawler, request }) => {
             },
         });
     }
-    await crawler.addRequests(requests);
+    await addRequests(requests);
 });
 
-router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
+router.addHandler(labels.PRODUCT, async ({ $, addRequests, request }) => {
     const { data } = request.userData;
 
     // Sometimes Amazon returns an empty page instead of the product,
@@ -56,7 +56,7 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
             .get()
             .join(' ');
 
-    await crawler.addRequests([
+    await addRequests([
         {
             url: OFFERS_URL(data.asin),
             label: labels.OFFERS,
