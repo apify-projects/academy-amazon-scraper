@@ -6,7 +6,7 @@ The scraper takes a keyword, searches Amazon for it, and saves every offer for e
 
 ## How it works
 
-The scraper is built with [Crawlee](https://crawlee.dev/) and the [Apify SDK](https://docs.apify.com/sdk/js/). It uses `CheerioCrawler`, which downloads pages over plain HTTP and parses their HTML. Each request has a label, and the router in `src/routes.js` handles each label differently:
+The scraper is built with [Crawlee](https://crawlee.dev/) and the [Apify SDK](https://docs.apify.com/sdk/js/), on top of Apify's [Crawlee + Cheerio template](https://github.com/apify/actor-templates/tree/master/templates/js-crawlee-cheerio). The project setup, such as the Dockerfile, the schemas in `.actor/`, and the linter configuration, follows the template. It uses `CheerioCrawler`, which downloads pages over plain HTTP and parses their HTML. Each request has a label, and the router in `src/routes.js` handles each label differently:
 
 1. `START` - The search results page. The scraper finds all products on it, skipping sponsored results, and enqueues a request to each product's page.
 2. `PRODUCT` - The product page. The scraper extracts the product's description and enqueues a request to the product's offers.
