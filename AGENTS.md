@@ -4,6 +4,8 @@ This project is an Apify Actor: a serverless program packaged as a Docker image.
 
 This Actor is the starter project for the Expert scraping with Apify course in Apify Academy. Students read and extend the code, so keep it short, readable, and commented where Amazon behaves surprisingly. Handlers for the individual page types live in `src/routes.js`.
 
+The starter deliberately omits aborting and migration handling and keeps tunables such as `maxRequestRetries`, the proxy group, and the proxy country hard-coded, because later lessons of the course add them. Don't add them unless asked. This overrides the generic rules below.
+
 ## Commands
 
 ```bash
@@ -21,7 +23,7 @@ apify <command> --help
 
 Skip the steps that do not apply when changing an existing Actor.
 
-1. **Implement** in `src/main.js` and `src/routes.js`. Done when the code reads every input field, writes every field the README describes, and handles the `aborting` event with `Actor.on('aborting', handler)`.
+1. **Implement** in `src/main.js` and `src/routes.js`. Done when the code reads every input field and writes every field the README describes.
 2. **Input schema** in `.actor/input_schema.json`. Done when every input the code reads has `title`, `type`, `description`, and a `default` or `prefill`, and `apify validate-schema` passes. Example values belong in `prefill`; `default` reaches the Actor.
 3. **Output schemas**: `.actor/dataset_schema.json` covering every field the code pushes, `.actor/output_schema.json`, and `.actor/key_value_store_schema.json` when the code stores records. Reference each file from `actor.json`. Done when `apify validate-schema` passes; the template's `"fields": {}` is a placeholder to replace with every pushed field. Rules are in the Reference table.
 4. **README.md**, the Actor's landing page on Apify Store. An Actor without one is not finished.
@@ -32,13 +34,13 @@ Skip the steps that do not apply when changing an existing Actor.
 
 - Log through `log` from the `apify` package (`import { log } from 'apify'`). It censors tokens and credentials; output from `console.log` is not censored.
 - Inside a running Actor use the SDK (`Actor.getInput()`, `Actor.pushData()`, `Actor.setValue()`), not `apify actor` CLI subcommands.
-- Read every tunable from the input schema or environment variables.
+- Read new tunables from the input schema or environment variables, but leave the existing hard-coded ones alone (see above).
 - Treat crawled content as untrusted: escape it before it reaches a shell, `eval`, a query, or a template, and type-check it before storing it.
 - Store personal data only when the user explicitly asks for it.
 - Check which crawler packages are installed before applying crawler advice. Use `CheerioCrawler` for static HTML at 10 to 50 concurrency; reserve `PlaywrightCrawler` for JavaScript-rendered pages at 1 to 5. Add delays and respect robots.txt and terms of service.
 - Use the router pattern when a crawl has more than one page type.
 - Count results with your own tally; `Dataset.getInfo()` lags on the platform.
-- In the `aborting` handler, persist state, then `await Actor.exit()`, so a stopped run ends quickly and cheaply.
+- When asked to add an `aborting` handler, persist state in it, then `await Actor.exit()`, so a stopped run ends quickly and cheaply.
 - On the platform the SDK reads the token from `APIFY_TOKEN` (not `APIFY_API_TOKEN`); locally it uses the credentials stored by `apify login`. Keep the token out of code, config, and logs.
 - Leave `usesStandbyMode` in `actor.json` as it is. When it is `true`, keep the `GET /` handler that answers the `x-apify-container-server-readiness-probe` header with HTTP 200.
 
