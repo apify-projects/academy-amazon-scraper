@@ -19,7 +19,8 @@ The project files:
 - `src/main.js` - Reads the input, sets up the proxies and the crawler, and starts the crawl.
 - `src/routes.js` - The handlers for each label, which do the actual scraping.
 - `src/constants.js` - The labels and URLs shared by the other files.
-- `.actor/` - Configuration of the Actor for the Apify platform: name, input schema, and the Dockerfile to build it.
+- `.actor/` - Configuration of the Actor for the Apify platform: name, and the schemas of the input and of the output.
+- `Dockerfile` - How the Apify platform builds the Actor.
 
 ## Input
 
@@ -51,7 +52,7 @@ Even with residential proxies, Amazon sometimes responds with errors or an empty
 
 ## Running the scraper
 
-You need [Node.js](https://nodejs.org/), the [Apify CLI](https://docs.apify.com/cli), and an [Apify account](https://console.apify.com).
+You need [Node.js](https://nodejs.org/) 24 or newer, the [Apify CLI](https://docs.apify.com/cli), and an [Apify account](https://console.apify.com).
 
 ```bash
 npm install
@@ -66,6 +67,18 @@ apify push
 ```
 
 Then open the Actor in [Apify Console](https://console.apify.com/actors) and start it, or run `apify call`.
+
+## Development
+
+The code is checked by [ESLint](https://eslint.org/) and formatted by [Prettier](https://prettier.io/). Before you commit, run:
+
+```bash
+npm run lint
+npm run format
+apify validate-schema
+```
+
+GitHub Actions run the same checks on every pull request.
 
 ## When it breaks
 
