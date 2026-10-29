@@ -4,7 +4,7 @@ This project is an Apify Actor: a serverless program packaged as a Docker image.
 
 This Actor is the starter project for the Expert scraping with Apify course in Apify Academy. Students read and extend the code, so keep it short, readable, and commented where Amazon behaves surprisingly. Handlers for the individual page types live in `src/routes.js`.
 
-The starter deliberately omits aborting and migration handling and keeps tunables such as `maxRequestRetries`, the proxy group, and the proxy country hard-coded, because later lessons of the course add them. Don't add them unless asked. This overrides the generic rules below.
+The starter deliberately has no aborting or migration handling, because students add state persistence in the [Migrations & maintaining state](https://docs.apify.com/academy/expert-scraping-with-apify/migrations-maintaining-state) lesson. It also keeps tunables such as `maxRequestRetries`, the proxy group, and the proxy country hard-coded so the input stays a single keyword. Don't change either unless asked. This overrides the generic rules below.
 
 ## Commands
 
