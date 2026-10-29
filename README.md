@@ -59,7 +59,7 @@ apify login
 apify run
 ```
 
-Whether you can use Apify Proxy from your own computer depends on your Apify plan. If the local run fails on proxy errors, deploy the scraper to the Apify platform and run it there:
+Connecting to Apify Proxy from your own computer [requires a paid Apify plan](https://docs.apify.com/platform/proxy#external-connection). On the free plan, the local run fails on proxy errors, so deploy the scraper to the Apify platform and run it there:
 
 ```bash
 apify push

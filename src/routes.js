@@ -64,6 +64,12 @@ router.addHandler(labels.PRODUCT, async ({ $, crawler, request }) => {
 router.addHandler(labels.OFFERS, async ({ $, request }) => {
     const { data } = request.userData;
 
+    // Sometimes Amazon returns a page without the offers,
+    // so we throw an error to retry the request with a different proxy
+    if (!$('#aod-container').length) {
+        throw new Error('Offers did not load, retrying');
+    }
+
     // The pinned offer is the one in the "Add to Cart" box,
     // the others are listed below it
     for (const offer of $('#aod-pinned-offer, #aod-offer')) {
