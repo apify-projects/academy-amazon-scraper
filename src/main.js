@@ -9,6 +9,8 @@ const { keyword = 'iphone' } = (await Actor.getInput()) ?? {};
 
 const proxyConfiguration = await Actor.createProxyConfiguration({
     groups: ['RESIDENTIAL'],
+    // Without this, Amazon shows prices in the currency of the proxy's country
+    countryCode: 'US',
 });
 
 const crawler = new CheerioCrawler({
@@ -19,7 +21,7 @@ const crawler = new CheerioCrawler({
 
 log.info('Starting the crawl.');
 await crawler.run([{
-    url: `${BASE_URL}/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${keyword}`,
+    url: `${BASE_URL}/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=${encodeURIComponent(keyword)}`,
     label: labels.START,
     userData: { keyword },
 }]);
