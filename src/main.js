@@ -6,7 +6,7 @@ import { router } from './routes.js';
 
 await Actor.init();
 
-const { keyword = 'iphone' } = (await Actor.getInput()) ?? {};
+const { keyword = 'headphones' } = (await Actor.getInput()) ?? {};
 
 const proxyConfiguration = await Actor.createProxyConfiguration({
     groups: ['RESIDENTIAL'],
