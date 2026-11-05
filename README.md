@@ -24,7 +24,7 @@ The project files:
 
 ## Input
 
-The only input is `keyword`, the text to search Amazon for. It defaults to `iphone`.
+The only input is `keyword`, the text to search Amazon for. It defaults to `headphones`.
 
 ## Output
 
@@ -32,13 +32,13 @@ Each dataset item represents a single offer:
 
 ```json
 {
-    "title": "iPhone 17 Pro Max, US Version, 256GB, eSIM, Deep Blue- Unlocked (Renewed)",
-    "asin": "B0FTCWXD9K",
-    "itemUrl": "https://www.amazon.com/dp/B0FTCWXD9K",
-    "keyword": "iphone",
-    "description": "Apple iPhone 17 Pro Max, US Version, 256GB, eSIM, Deep Blue...",
-    "sellerName": "MobiWise",
-    "offer": "$1,080.59"
+    "title": "Bose QuietComfort Bluetooth Headphones, Wireless Headphones with Active Over Ear Noise Cancelling and Mic, Deep Bass, Up to 24 Hours of Playtime, Cypress Green - Limited Edition",
+    "asin": "B0CCZ1SQ8G",
+    "itemUrl": "https://www.amazon.com/dp/B0CCZ1SQ8G",
+    "keyword": "headphones",
+    "description": "Go beyond the beat and take control of the sound that puts you on top of the world with Bose QuietComfort Wireless Noise Cancelling Headphones...",
+    "sellerName": "Amazon.com",
+    "offer": "$169.00"
 }
 ```
 

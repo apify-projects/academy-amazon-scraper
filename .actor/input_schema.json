@@ -9,7 +9,7 @@
             "type": "string",
             "description": "The keyword to search for on Amazon.",
             "editor": "textfield",
-            "default": "iphone"
+            "default": "headphones"
         }
     },
     "required": ["keyword"]
